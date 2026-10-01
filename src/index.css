@@ -1,99 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap');
+
 :root {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-body: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif;
+
+  /* Campus palette: CIT maroon + library-card gold on cool paper */
+  --maroon: #7a1c2c;
+  --maroon-deep: #5a1220;
+  --maroon-tint: #f8eaec;
+  --gold: #f2b13a;
+  --gold-tint: #fdf3dc;
+
+  --ink: #1b1d22;
+  --ink-secondary: #3d424b;
+  --muted: #6a717c;
+  --muted-light: #99a0aa;
+
+  --bg-app: #f2f4f3;
+  --bg-surface: #ffffff;
+  --bg-subtle: #eaeeec;
+  --line: #dfe3e1;
+  --line-soft: #ecefed;
+
+  /* Legacy aliases */
+  --primary: var(--maroon);
+  --primary-hover: var(--maroon-deep);
+  --primary-light: var(--maroon-tint);
+  --border: var(--line);
+
+  --sell-bg: #e3f4ec; --sell-fg: #0f6b4a;
+  --rent-bg: #fdf0d6; --rent-fg: #8a5200;
+  --swap-bg: #e9e9fb; --swap-fg: #3f3fa8;
+  --borrow-bg: #def3f6; --borrow-fg: #0b6577;
+  --free-bg: #fde6ec; --free-fg: #a3173f;
+
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px;
+  --shadow-pop: 0 12px 32px rgb(40 12 20 / 0.18);
+
+  font-family: var(--font-body);
+  font-size: 15px;
   line-height: 1.5;
-  font-weight: 400;
-
+  color: var(--ink);
+  background: var(--bg-app);
   color-scheme: light;
-  color: #0f172a;
-  background-color: #f8fafc;
-
-  font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-light: #eef2ff;
-  --primary-border: #c7d2fe;
-  
-  --ink: #0f172a;
-  --ink-secondary: #334155;
-  --muted: #64748b;
-  --muted-light: #94a3b8;
-  
-  --bg-app: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-subtle: #f1f5f9;
-  
-  --border: #e2e8f0;
-  --border-light: #f1f5f9;
-  --border-strong: #cbd5e1;
-
-  --badge-sell-bg: #ecfdf5;
-  --badge-sell-text: #047857;
-  --badge-sell-border: #a7f3d0;
-
-  --badge-rent-bg: #fffbeb;
-  --badge-rent-text: #b45309;
-  --badge-rent-border: #fde68a;
-
-  --badge-swap-bg: #eef2ff;
-  --badge-swap-text: #4338ca;
-  --badge-swap-border: #c7d2fe;
-
-  --badge-borrow-bg: #f0f9ff;
-  --badge-borrow-text: #0369a1;
-  --badge-borrow-border: #bae6fd;
-
-  --badge-free-bg: #fff1f2;
-  --badge-free-text: #be123c;
-  --badge-free-border: #fecdd3;
-
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --radius-full: 9999px;
-
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.04);
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  margin: 0;
   min-width: 320px;
-  min-height: 100vh;
-  background-color: var(--bg-app);
+  min-height: 100dvh;
+  background: var(--bg-app);
   color: var(--ink);
-  overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
 }
 
-button {
-  font: inherit;
-  cursor: pointer;
-  border: none;
-  background: none;
-}
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.12; letter-spacing: -0.02em; text-wrap: balance; }
+button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; }
+input, select, textarea { font: inherit; color: inherit; }
+img, svg { vertical-align: middle; }
+img { max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
 
-input, select, textarea {
-  font: inherit;
-}
+:focus-visible { outline: 2px solid var(--maroon); outline-offset: 2px; }
 
-img, svg {
-  vertical-align: middle;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }

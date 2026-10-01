@@ -196,6 +196,8 @@ const initialConversations: Conversation[] = [
   },
 ]
 
+const scrollToTop = () => document.querySelector('.app-container')?.scrollTo({ top: 0 })
+
 export function App() {
   const [view, setView] = useState<'home' | 'browse' | 'post' | 'profile' | 'inbox'>('home')
   const [auth, setAuth] = useState<'signin' | 'signup' | null>(null)
@@ -211,6 +213,8 @@ export function App() {
   const [activeChatId, setActiveChatId] = useState<number>(1)
   const [mobileChatOpen, setMobileChatOpen] = useState<boolean>(false)
   const [toast, setToast] = useState<string | null>(null)
+  const [plansOpen, setPlansOpen] = useState<boolean>(false)
+  const [sellerPlan, setSellerPlan] = useState<'Monthly' | 'Semester' | null>(null)
 
   const showToast = (message: string) => {
     setToast(message)
@@ -252,7 +256,7 @@ export function App() {
     if (initialSearch !== undefined) setSearch(initialSearch)
     setView('browse')
     setMenuOpen(false)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    scrollToTop()
   }
 
   const handleStartChatFromListing = (item: Listing) => {
@@ -298,7 +302,10 @@ export function App() {
     setCategoryFilter('All')
   }
 
-  // Close mobile menu on ESC or outside click
+  // Each screen opens at the top
+  useEffect(() => { scrollToTop() }, [view])
+
+  // Close mobile menu on resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 840) setMenuOpen(false)
@@ -308,7 +315,7 @@ export function App() {
   }, [])
 
   return (
-    <div className="app-container">
+    <div className="phone-frame"><div className="app-container">
       {toast && <div className="toast-notification"><IconCheck size={16} /><span>{toast}</span></div>}
 
       {/* Top Header */}
@@ -335,6 +342,9 @@ export function App() {
             <button className={`nav-link nav-link-inbox ${view === 'inbox' ? 'active' : ''}`} onClick={() => { setView('inbox'); setMobileChatOpen(false) }}>
               Inbox
               {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
+            </button>
+            <button className="nav-link seller-nav-link" onClick={() => setPlansOpen(true)}>
+              Seller plans
             </button>
           </nav>
 
@@ -381,6 +391,9 @@ export function App() {
             </button>
             <button className={`dropdown-item ${view === 'profile' ? 'active' : ''}`} onClick={() => { setView('profile'); setMenuOpen(false) }}>
               <IconUser size={18} /> Student Dashboard
+            </button>
+            <button className="dropdown-item" onClick={() => { setPlansOpen(true); setMenuOpen(false) }}>
+              <IconTag size={18} /> Seller plans
             </button>
             {!studentName ? (
               <div className="mobile-dropdown-auth">
@@ -472,7 +485,7 @@ export function App() {
       <nav className="mobile-bottom-nav" aria-label="Mobile Navigation">
         <button
           className={`mobile-tab ${view === 'home' ? 'active' : ''}`}
-          onClick={() => { setView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+          onClick={() => { setView('home'); scrollToTop() }}
         >
           <IconHome size={22} />
           <span>Home</span>
@@ -531,6 +544,18 @@ export function App() {
         />
       )}
 
+      {plansOpen && (
+        <SellerPlansModal
+          selectedPlan={sellerPlan}
+          onClose={() => setPlansOpen(false)}
+          onSelect={(plan) => {
+            setSellerPlan(plan)
+            setPlansOpen(false)
+            showToast(`${plan} Seller plan selected — unlimited listings unlocked`)
+          }}
+        />
+      )}
+
       {/* Listing Detail Modal / Bottom Sheet */}
       {selected && (
         <ItemDetailModal
@@ -541,7 +566,7 @@ export function App() {
           onStartChat={() => handleStartChatFromListing(selected)}
         />
       )}
-    </div>
+    </div></div>
   )
 }
 
@@ -1007,7 +1032,6 @@ function PostView({
     <div className="post-container">
       <div className="post-form-card">
         <div className="form-header">
-          <span className="section-eyebrow">POST A MATERIAL</span>
           <h1 className="form-title">List an Item on Campus</h1>
           <p className="form-subtitle">Make your past semester resources available to other students.</p>
         </div>
@@ -1528,6 +1552,14 @@ function InboxView({
 /* ==========================================================================
    Item Detail Modal Component (Mobile Bottom Sheet / Desktop Modal)
    ========================================================================== */
+function SellerPlansModal({ selectedPlan, onClose, onSelect }: { selectedPlan: 'Monthly' | 'Semester' | null; onClose: () => void; onSelect: (plan: 'Monthly' | 'Semester') => void }) {
+  const plans = [
+    { id: 'Monthly' as const, title: 'Seller Monthly', price: '₱79', cadence: '/ month', caption: 'Flexibility for regular campus sellers.', accent: 'standard', features: ['Unlimited active listings', 'Message interested students', 'Basic listing insights', 'Cancel anytime'] },
+    { id: 'Semester' as const, title: 'Seller Semester', price: '₱299', cadence: '/ semester', caption: 'The best value for frequent sellers.', accent: 'featured', features: ['Everything in Monthly', 'Unlimited active listings', 'Priority placement in browse', 'Semester seller badge'] },
+  ]
+  return <div className="modal-backdrop plans-backdrop" onClick={onClose} role="presentation"><div className="seller-plans-modal" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label="Seller subscription plans"><button className="modal-close-btn" onClick={onClose} aria-label="Close seller plans"><IconClose size={20} /></button><div className="plans-modal-intro"><span className="plans-eyebrow"><IconTag size={14} /> Sell more on campus</span><h2>Unlimited listings, one simple plan.</h2><p>Choose the seller plan that fits your semester. Both plans unlock unlimited active listings.</p></div><div className="plan-options">{plans.map((plan) => <article className={`plan-option ${plan.accent} ${selectedPlan === plan.id ? 'selected' : ''}`} key={plan.id}>{plan.accent === 'featured' && <span className="popular-plan-badge">Best value</span>}<div className="plan-title-row"><h3>{plan.title}</h3>{selectedPlan === plan.id && <span className="current-plan-tag">Current plan</span>}</div><p className="plan-caption">{plan.caption}</p><div className="plan-price"><strong>{plan.price}</strong><span>{plan.cadence}</span></div><ul>{plan.features.map((feature) => <li key={feature}><IconCheck size={14} />{feature}</li>)}</ul><button className={plan.accent === 'featured' ? 'btn-primary full-width' : 'btn-secondary full-width'} onClick={() => onSelect(plan.id)}>{selectedPlan === plan.id ? 'Selected' : `Choose ${plan.id}`}</button></article>)}</div><p className="plan-footnote"><IconShieldCheck size={14} /> Student-friendly pricing. Payment is simulated in this prototype.</p></div></div>
+}
+
 function ItemDetailModal({
   item,
   saved,
